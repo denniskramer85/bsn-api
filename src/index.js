@@ -1,17 +1,78 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { useState } from "react";
+import ReactDOM from "react-dom";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import "./styles.css";
+import * as Yup from "yup";
+import NatPersoonAPIcheck from "./natPersoonAPIcheck";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const SignupForm = () => {
+    const [formData, setFormData] = useState({
+        bsn: "",
+        voornaam: "",
+        tussenvoegsel: "",
+        achternaam: "",
+        geslacht: "",
+        geboortedatum: "",
+    });
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    return (
+        <Formik
+            enableReinitialize={true}
+            initialValues={formData}
+            validationSchema={Yup.object({
+                bsn: Yup.string()
+                    .max(15, "Must be 15 characters or less")
+                    .required("Required"),
+                voornaam: Yup.string()
+                    .max(20, "Must be 20 characters or less")
+                    .required("Required"),
+                achternaam: Yup.string().required("Required"),
+            })}
+            onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                    alert(JSON.stringify(values, null, 2));
+                    setSubmitting(false);
+                }, 400);
+            }}
+        >
+            <Form>
+                <label htmlFor="firstName">BSN</label>
+                <Field name="bsn" type="text" placeholder="type your bsn" />
+                <ErrorMessage name="bsn" />
+                <label htmlFor="voornaam">Voornaam</label>
+                <Field name="voornaam" type="text" />
+                <ErrorMessage name="voornaam" />
+                <label htmlFor="tussenvoegsel">tussenvoegsel</label>
+                <Field name="tussenvoegsel" type="text" />
+                <ErrorMessage name="tussenvoegsel" />
+                <label htmlFor="achternaam">Achternaam</label>
+                <Field name="achternaam" type="text" />
+                <ErrorMessage name="achternaam" />
+                <label htmlFor="geslacht">Geslacht</label>
+                <Field name="geslacht" as="select">
+                    <option value="man">Man</option>
+                    <option value="green">Vrouw</option>
+                    <ErrorMessage name="geslacht" />
+                </Field>
+                <label htmlFor="geboortedatum">Geboortedatum</label>
+                <Field name="geboortedatum" type="date" />
+                <ErrorMessage name="geboortedatum" />
+                <div>
+                    <button type="submit">Submit</button>
+                </div>
+            </Form>
+        </Formik>
+    );
+};
+
+function App() {
+    return (
+        <div>
+            <NatPersoonAPIcheck />
+            <SignupForm />
+        </div>
+    );
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
